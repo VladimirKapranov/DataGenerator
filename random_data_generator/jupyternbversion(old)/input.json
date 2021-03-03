@@ -1,0 +1,19 @@
+{
+  "variables": {
+    "first_table_num": 25,
+    "second_table_num": 13,
+    "first_table_join_column": 1,
+    "second_table_join_column": 2,
+    "joins_num": 3
+  },
+  "columns_first_table": [
+    ["Name", "str"],
+    ["Phone", "int"]
+  ],
+  "columns_second_table": [
+    ["id", "int"],
+    ["from_number", "int"],
+    ["to_number", "int"],
+    ["duration", "int"]
+  ]
+}
