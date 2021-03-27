@@ -19,32 +19,29 @@ def buildint():
 def builddouble():
     return random.uniform(-100000, 100000)
 
+def buildelement(type):
+    if (type == "str"):
+        temp = buildstring(random.randint(1, 20))
+    if (type == "int"):
+        temp = buildint()
+    if (type == "date"):
+        temp = builddate('1970-01-01', 5000)
+    if (type == "double"):
+        temp = builddouble()
+    return temp
+
 def generatefirst(input, firstN, firstJ, joinsN, columns):
     firsttable = []
     for i in range(0, firstN):
         temprow = {}
         for j in range (0, len(input["columns_first_table"])):
-            if (input["columns_first_table"][j][1] == "str"):
-                temp = buildstring(random.randint(1, 20))
-            if (input["columns_first_table"][j][1] == "int"):
-                temp = buildint()
-            if (input["columns_first_table"][j][1] == "date"):
-                temp = builddate('1970-01-01', 5000)
-            if (input["columns_first_table"][j][1] == "double"):
-                temp = builddouble()
+            temp = buildelement(input["columns_first_table"][j][1])
             if (j == firstJ):
                 if (i < joinsN):
                     count = 1
                     while (count != 0):
                         count = 0
-                        if (input["columns_first_table"][j][1] == "str"):
-                            temp = buildstring(random.randint(1, 15))
-                        if (input["columns_first_table"][j][1] == "int"):
-                            temp = random.randint(1, 9999)
-                        if (input["columns_first_table"][j][1] == "date"):
-                            temp = builddate('1970-01-01', 5000)
-                        if (input["columns_first_table"][j][1] == "double"):
-                            temp = builddouble()
+                        temp = buildelement(input["columns_first_table"][j][1])
                         for k in range(0, i):
                             if (temp == firsttable[k][columns[firstJ]]):
                                 count += 1
@@ -52,14 +49,7 @@ def generatefirst(input, firstN, firstJ, joinsN, columns):
                     count = 1
                     while (count != 0):
                         count = 0
-                        if (input["columns_first_table"][j][1] == "str"):
-                            temp = buildstring(random.randint(1, 15))
-                        if (input["columns_first_table"][j][1] == "int"):
-                            temp = random.randint(1, 9999)
-                        if (input["columns_first_table"][j][1] == "date"):
-                            temp = builddate('1970-01-01', 5000)
-                        if (input["columns_first_table"][j][1] == "double"):
-                            temp = builddouble()
+                        temp = buildelement(input["columns_first_table"][j][1])
                         for k in range(0, joinsN):
                             if (temp == firsttable[k][columns[firstJ]]):
                                 count += 1
@@ -67,20 +57,12 @@ def generatefirst(input, firstN, firstJ, joinsN, columns):
         firsttable.append(temprow)
     return firsttable
 
-
 def generatesecond(firsttable, input, firstN, secondN, firstJ, secondJ, joinsN, columns):
     secondtable = []
     for i in range(0, secondN):
         temprow = {}
         for j in range (0, len(input["columns_second_table"])):
-            if (input["columns_second_table"][j][1] == "str"):
-                temp = buildstring(random.randint(1, 15))
-            if (input["columns_second_table"][j][1] == "int"):
-                temp = random.randint(1, 9999)
-            if (input["columns_second_table"][j][1] == "date"):
-                temp = builddate('1970-01-01', 5000)
-            if (input["columns_second_table"][j][1] == "double"):
-                temp = builddouble()
+            temp = buildelement(input["columns_second_table"][j][1])
             if (j == secondJ):
                 if (i < joinsN):
                     temp = firsttable[i][columns[firstJ]]
@@ -88,14 +70,7 @@ def generatesecond(firsttable, input, firstN, secondN, firstJ, secondJ, joinsN, 
                     count = 1
                     while (count != 0):
                         count = 0
-                        if (input["columns_second_table"][j][1] == "str"):
-                            temp = buildstring(random.randint(1, 15))
-                        if (input["columns_second_table"][j][1] == "int"):
-                            temp = random.randint(1, 9999)
-                        if (input["columns_second_table"][j][1] == "date"):
-                            temp = builddate('1970-01-01', 5000)
-                        if (input["columns_second_table"][j][1] == "double"):
-                            temp = builddouble()
+                        temp = buildelement(input["columns_second_table"][j][1])
                         for k in range(0, firstN):
                             if (temp == firsttable[k][columns[firstJ]]):
                                 count += 1
@@ -115,6 +90,7 @@ def generatesecond(firsttable, input, firstN, secondN, firstJ, secondJ, joinsN, 
               help='Second Table join column')
 @click.option('--joinsN', default=1,
               help='Number of joined elements')
+
 def generator(firstn, secondn, firstj, secondj, joinsn):
     with open('input.json') as f:
         input = json.load(f)    
@@ -123,14 +99,14 @@ def generator(firstn, secondn, firstj, secondj, joinsn):
 
     for j in range (0, len(input["columns_first_table"])):
         columnsfirst.append(input["columns_first_table"][j][0])
-    
-    
+
     firsttable = generatefirst(input, firstn, firstj, joinsn, columnsfirst)
 
     columnssecond = []
 
     for j in range (0, len(input["columns_second_table"])):
         columnssecond.append(input["columns_second_table"][j][0])
+        
 
     secondtable = generatesecond(firsttable, input, firstn, secondn, firstj, secondj, joinsn, columnsfirst)
 
@@ -140,9 +116,9 @@ def generator(firstn, secondn, firstj, secondj, joinsn):
         writer = csv.DictWriter(file, fieldnames=columnsfirst)
         writer.writeheader()
         writer.writerows(firsttable)
-            
+
     FILENAME = "secondtable.csv"
-    
+
     with open(FILENAME, "w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=columnssecond)
         writer.writeheader()
